@@ -1,0 +1,28 @@
+version: '3.7'
+services:
+  search_api:
+    container_name: 'search_api'
+    restart: 'on-failure'
+    build:
+      context: ""
+      dockerfile: Dockerfile
+    ports:
+      - '8080:8080'
+    depends_on:
+      - elasticsearch
+  elasticsearch:
+    environment:
+      - network.publish_host="_local_"
+      - http.host=0.0.0.0
+      - transport.host=0.0.0.0
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+      - discovery.type=single-node
+      - http.cors.allow-origin=*
+      - http.cors.allow-headers=X-Requested-With,X-Auth-Token,Content-Type,Content-Length,Authorization
+    container_name: 'elasticsearch'
+    image: 'docker.elastic.co/elasticsearch/elasticsearch:7.9.2'
+    expose:
+      - "9200"
+    ports:
+      - '9200:9200'
+      - '9300:9300'
